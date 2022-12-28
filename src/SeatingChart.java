@@ -22,9 +22,9 @@ public class SeatingChart {
                 if (!seats.get(i).isReserved()) { //if not reserved, reserve it and add to reserved seats array
                     seats.get(i).setReserved();
                     reservedSeats.add(seats.get(i));
-                    result = seatRes + " is now reserved.";
+                    result = "Seat " + seatRes + " is now reserved.";
                 } else {
-                    result = seatRes + " is not available! Select another seat.";
+                    result = "Seat " + seatRes + " is not available! Select another seat.";
                 }
                 break; //if it's a match, no need to keep checking. Break out of loop
             }
@@ -37,7 +37,7 @@ public class SeatingChart {
         int currentRow = 1;
         double idealDistance = 1; //the ideal average manhattan distance for a set of seats
         double bestDistance = 0.0; //tracks the current closest distance to ideal distance
-        String result = "";
+        String result;
 
         //loop variable tracks how many seats have been evaluated and establishes position of seat currently being checked
         for (int numOfCurrentSeat = 0; numOfCurrentSeat < rows*columns; numOfCurrentSeat++) {
@@ -83,7 +83,11 @@ public class SeatingChart {
                     }
                 }
             }
-            result = "Seats " + bestSeats.get(0).getName() + " - " + bestSeats.get(numSeatsToRes-1).getName() + " are now reserved.";
+            if (numSeatsToRes == 1) {
+                result = "Seat " + bestSeats.get(0).getName() + " is now reserved.";
+            } else {
+                result = "Seats " + bestSeats.get(0).getName() + " - " + bestSeats.get(numSeatsToRes - 1).getName() + " are now reserved.";
+            }
             reservedSeats.addAll(bestSeats);
             System.out.println(reservedSeats);
         } else { //inform user if request cannot be accommodated

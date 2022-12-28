@@ -7,7 +7,7 @@ public class Main {
     static int rows;
     static JFrame frame;
     static JButton createChartButton = new JButton("Set Chart Dimensions");
-    static JButton resStringButton = new JButton("Reserve seats");
+    static JButton resStringButton = new JButton("Reserve seat");
     static JButton resNumButton = new JButton("Reserve seats");
     static JLabel columnsLabel = new JLabel("Number of Columns: ");
     static JLabel rowsLabel =  new JLabel("Number of Rows: ");
@@ -46,6 +46,9 @@ public class Main {
         panel.add(resNumField);
         panel.add(resNumButton);
 
+        resultArea.setEditable(false);
+        resultArea.setLineWrap(true);
+        resultArea.setWrapStyleWord(true);
         JScrollPane scroller = new JScrollPane(resultArea);
         scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -59,13 +62,13 @@ public class Main {
             columns = Integer.parseInt(columnsField.getText());
             rows = Integer.parseInt(rowsField.getText());
             if (columns == 0 || rows == 0) {
-                resultArea.append("Rows and columns must be greater than 0!\n");
+                System.out.println("Rows and columns must be greater than 0!\n");
             } else {
                 seatingChart = new SeatingChart(columns, rows);
                 setVisibility(false);
             }
         } else {
-            resultArea.append("Enter valid integers for both rows and columns!\n");
+            System.out.println("Enter valid integers for both rows and columns!\n");
         }
     }
     public static void resSpecificSeats(String request) {
@@ -76,6 +79,7 @@ public class Main {
 
             if (requestedRows > 0 && requestedColumns > 0 && requestedRows <= rows && requestedColumns <= columns) {
                 resultArea.append(seatingChart.setReservedSeat(resStringField.getText())+"\n");
+                resStringField.setText("");
             }
             if (requestedRows > rows || requestedRows <= 0) {
                 resultArea.append("Row out of bounds in request!\n");
@@ -84,18 +88,17 @@ public class Main {
                 resultArea.append("Column out of bounds in request!\n");
             }
         } else {
-            resultArea.append("Invalid 'specific seat' request. Request in form of 'R#C#'\n");
+            resultArea.append("Invalid seat request. Ensure entry is in form of 'R#C#'\n");
         }
-        resStringField.setText("");
     }
     public static void resNumSeats() {
         if (resNumField.getText().matches("[0-9]+")) {
             resultArea.append(seatingChart.setReservedSeat(Integer.parseInt(resNumField.getText()))+"\n");
+            //resultArea.append("Number of remaining seats: " + seatingChart.getReservedSeatCount()+ '\n');
+            resNumField.setText("");
         } else {
-            resultArea.append("Invalid 'number of seats' request. Request in form of '#'\n");
+            resultArea.append("Invalid number request. Number must be between 0 and number of columns.\n");
         }
-        resultArea.append("Number of remaining seats: " + seatingChart.getReservedSeatCount()+ '\n');
-        resNumField.setText("");
     }
     public static void setVisibility(Boolean bool) {
         columnsField.setVisible(bool);
