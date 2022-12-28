@@ -15,26 +15,29 @@ public class SeatingChart {
             }
         }
     }
-    public void setReservedSeat(String seatRes) {
+    public String setReservedSeat(String seatRes) {
+        String result = "";
         for (int i = 0; i < rows*columns; i++) {
             if (seats.get(i).getName().equals(seatRes)) { //checks every seat for a match
                 if (!seats.get(i).isReserved()) { //if not reserved, reserve it and add to reserved seats array
                     seats.get(i).setReserved();
                     reservedSeats.add(seats.get(i));
-                    System.out.println(seatRes + " is now reserved");
+                    result = seatRes + " is now reserved.";
                 } else {
-                    System.out.println("Already reserved!");
+                    result = seatRes + " is not available! Select another seat.";
                 }
                 break; //if it's a match, no need to keep checking. Break out of loop
             }
         }
+        return result;
     }
-    public void setReservedSeat(int numSeatsToRes) {
+    public String setReservedSeat(int numSeatsToRes) {
         ArrayList<Seat> tempReservedSeats = new ArrayList<>(); //tracks current attempt at seat combination
         ArrayList<Seat> bestSeats = new ArrayList<>(); //tracks current best combination of seats
         int currentRow = 1;
         double idealDistance = 1; //the ideal average manhattan distance for a set of seats
         double bestDistance = 0.0; //tracks the current closest distance to ideal distance
+        String result = "";
 
         //loop variable tracks how many seats have been evaluated and establishes position of seat currently being checked
         for (int numOfCurrentSeat = 0; numOfCurrentSeat < rows*columns; numOfCurrentSeat++) {
@@ -77,15 +80,16 @@ public class SeatingChart {
                 for (Seat bestSeat : bestSeats) {
                     if (seat.equals(bestSeat)) {
                         seat.setReserved();
-                        System.out.println(bestSeat + " is now reserved");
                     }
                 }
             }
+            result = "Seats " + bestSeats.get(0).getName() + " - " + bestSeats.get(numSeatsToRes-1).getName() + " are now reserved.";
             reservedSeats.addAll(bestSeats);
             System.out.println(reservedSeats);
         } else { //inform user if request cannot be accommodated
-            System.out.println("Not Available");
+            result = "Insufficient space for request. Try another number.";
         }
+        return result;
     }
     public double manhattanDistance(ArrayList<Seat> seatSet,int numSeatsToRes) {
         double distances = 0.0;

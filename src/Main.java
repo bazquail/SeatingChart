@@ -9,14 +9,15 @@ public class Main {
     static JButton createChartButton = new JButton("Set Chart Dimensions");
     static JButton resStringButton = new JButton("Reserve seats");
     static JButton resNumButton = new JButton("Reserve seats");
-    static JLabel columnsLabel = new JLabel("Type number of columns");
-    static JLabel rowsLabel =  new JLabel("Type number of rows");
-    static JTextField columnsField = new JTextField(10);
-    static JTextField rowsField = new JTextField(10);
-    static JLabel resStringLabel = new JLabel("Type seat you want to reserve");
-    static JLabel resNumLabel = new JLabel("Type number of seats to reserve");
-    static JTextField resStringField = new JTextField(10);
-    static JTextField resNumField = new JTextField(10);
+    static JLabel columnsLabel = new JLabel("Number of Columns: ");
+    static JLabel rowsLabel =  new JLabel("Number of Rows: ");
+    static JTextField columnsField = new JTextField(5);
+    static JTextField rowsField = new JTextField(5);
+    static JLabel resStringLabel = new JLabel("Seat to Reserve: ");
+    static JLabel resNumLabel = new JLabel("Number of Seats to Reserve:");
+    static JTextField resStringField = new JTextField(5);
+    static JTextField resNumField = new JTextField(5);
+    static JTextArea resultArea = new JTextArea(6,30);
 
     public static void main(String[] args) {
         buildGui();
@@ -24,10 +25,8 @@ public class Main {
     public static void buildGui() {
         frame = new JFrame("Seating Chart");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(300,200);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
 
         createChartButton.addActionListener(l -> setChartDimensions());
         resStringButton.addActionListener(l -> resSpecificSeats(resStringField.getText().toUpperCase()));
@@ -47,6 +46,11 @@ public class Main {
         panel.add(resNumField);
         panel.add(resNumButton);
 
+        JScrollPane scroller = new JScrollPane(resultArea);
+        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        panel.add(scroller);
+
         frame.getContentPane().add(panel,BorderLayout.CENTER);
         frame.setVisible(true);
     }
@@ -55,13 +59,13 @@ public class Main {
             columns = Integer.parseInt(columnsField.getText());
             rows = Integer.parseInt(rowsField.getText());
             if (columns == 0 || rows == 0) {
-                System.out.println("Rows and columns must be greater than 0!");
+                resultArea.append("Rows and columns must be greater than 0!\n");
             } else {
                 seatingChart = new SeatingChart(columns, rows);
                 setVisibility(false);
             }
         } else {
-            System.out.println("Enter valid integers for both rows and columns!");
+            resultArea.append("Enter valid integers for both rows and columns!\n");
         }
     }
     public static void resSpecificSeats(String request) {
@@ -71,25 +75,27 @@ public class Main {
             int requestedColumns = Integer.parseInt(result[2]);
 
             if (requestedRows > 0 && requestedColumns > 0 && requestedRows <= rows && requestedColumns <= columns) {
-                seatingChart.setReservedSeat(resStringField.getText());
+                resultArea.append(seatingChart.setReservedSeat(resStringField.getText())+"\n");
             }
             if (requestedRows > rows || requestedRows <= 0) {
-                System.out.println("Row out of bounds in request!");
+                resultArea.append("Row out of bounds in request!\n");
             }
             if (requestedColumns > columns || requestedColumns <= 0) {
-                System.out.println("Column out of bounds in request!");
+                resultArea.append("Column out of bounds in request!\n");
             }
         } else {
-            System.out.println("Invalid 'specific seat' request. Request in form of 'R#C#'");
+            resultArea.append("Invalid 'specific seat' request. Request in form of 'R#C#'\n");
         }
+        resStringField.setText("");
     }
     public static void resNumSeats() {
         if (resNumField.getText().matches("[0-9]+")) {
-            seatingChart.setReservedSeat(Integer.parseInt(resNumField.getText()));
+            resultArea.append(seatingChart.setReservedSeat(Integer.parseInt(resNumField.getText()))+"\n");
         } else {
-            System.out.println("Invalid 'number of seats' request. Request in form of '#'");
+            resultArea.append("Invalid 'number of seats' request. Request in form of '#'\n");
         }
-        System.out.println("Num remaining seats: " + seatingChart.getReservedSeatCount());
+        resultArea.append("Number of remaining seats: " + seatingChart.getReservedSeatCount()+ '\n');
+        resNumField.setText("");
     }
     public static void setVisibility(Boolean bool) {
         columnsField.setVisible(bool);
@@ -104,5 +110,12 @@ public class Main {
         resStringField.setVisible(!bool);
         resStringLabel.setVisible(!bool);
         resStringButton.setVisible(!bool);
+        resultArea.setVisible(!bool);
+
+        if (bool) {
+            frame.setSize(200,130);
+        } else {
+            frame.setSize(400, 220);
+        }
     }
 }
